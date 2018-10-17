@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import {
-    View,
-    Image,
-    Text,
-    Button,
-    StyleSheet,
-    TouchableOpacity,
-} from 'react-native';
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux';
+import { deletePlace } from '../../store/actions/index';
 class PlaceDetail extends Component {
+    placeDeletedHandler = () => {
+        this.props.onDeletePlace(this.props.selectedPlace.key);
+        this.props.navigator.pop({
+            animated: true,
+        });
+    };
     render() {
-        const { selectedPlace, onItemDeleted, onModalClosed } = this.props;
+        const { selectedPlace } = this.props;
         return (
             <View style={styles.contaier}>
                 <View>
@@ -21,7 +22,7 @@ class PlaceDetail extends Component {
                     <Text style={styles.placeName}>{selectedPlace.name}</Text>
                 </View>
                 <View>
-                    <TouchableOpacity onPress={onItemDeleted}>
+                    <TouchableOpacity onPress={this.placeDeletedHandler}>
                         <View style={styles.deleteButton}>
                             <Icon size={30} name="ios-trash" color="red" />
                         </View>
@@ -50,4 +51,13 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PlaceDetail;
+const mapDispatchToProps = dispatch => {
+    return {
+        onDeletePlace: key => dispatch(deletePlace(key)),
+    };
+};
+
+export default connect(
+    null,
+    mapDispatchToProps,
+)(PlaceDetail);
