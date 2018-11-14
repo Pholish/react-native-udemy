@@ -1,12 +1,40 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import ListItems from '../../components/ListItems/ListItems';
 class FindPlaceScreen extends Component {
+    static navigatorStyle = {
+        navBarButtonColor: 'pink',
+    };
+    state = {
+        placesLoaded: false,
+        removeAnim: new Animated.Value(1),
+        placesAnim: new Animated.Value(0),
+    };
     constructor(props) {
         super(props);
         this.props.navigator.setOnNavigatorEvent(this.setOnNavigatorEvent);
     }
+    placesSearchHandler = () => {
+        Animated.timing(this.state.placesAnim, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    placesSearchHandler = () => {
+        Animated.timing(this.state.removeAnim, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: true,
+        }).start(() => {
+            this.setState({
+                placesLoaded: true,
+            });
+            this.placesSearchHandler();
+        });
+    };
 
     setOnNavigatorEvent = event => {
         if (event.type === 'NavBarButtonPress') {
@@ -29,16 +57,61 @@ class FindPlaceScreen extends Component {
         });
     };
     render() {
-        return (
-            <View>
-                <ListItems
-                    places={this.props.places}
-                    onItemSelected={this.itemSelectedHandler}
-                />
-            </View>
+        const { placesLoaded, placesAnim } = this.state;
+        let content = (
+            <Animated.View
+                style={{
+                    opacity: this.state.removeAnim,
+                    transform: [
+                        {
+                            scale: this.state.removeAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [12, 1],
+                            }),
+                        },
+                    ],
+                }}>
+                <TouchableOpacity onPress={this.placesSearchHandler}>
+                    <View style={styles.searchButton}>
+                        <Text style={styles.searchButtonText}>Find Places</Text>
+                    </View>
+                </TouchableOpacity>
+            </Animated.View>
         );
+        if (placesLoaded) {
+            content = (
+                <Animated.View
+                    style={{
+                        opacity: 0.5,
+                    }}>
+                    <View>
+                        <ListItems places={this.props.places} onItemSelected={this.itemSelectedHandler} />
+                    </View>
+                </Animated.View>
+            );
+        }
+        return <View style={this.state.placesLoaded ? null : styles.buttonContainer}>{content}</View>;
     }
 }
+
+const styles = StyleSheet.create({
+    buttonContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    searchButton: {
+        borderColor: 'orange',
+        borderWidth: 3,
+        borderRadius: 50,
+        padding: 20,
+    },
+    searchButtonText: {
+        color: 'orange',
+        fontWeight: 'bold',
+        fontSize: 26,
+    },
+});
 
 const mapStateToProps = state => {
     return {

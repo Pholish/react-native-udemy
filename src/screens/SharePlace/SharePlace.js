@@ -8,6 +8,10 @@ import HeadingText from '../../components/UI/HeadingText';
 import PickImage from '../../components/PickImage/PickImage';
 import PickLocation from '../../components/PickLocation/PickLocation';
 class SharePlaceScreen extends Component {
+    static navigatorStyle = {
+        navBarButtonColor: 'pink',
+    };
+
     constructor(props) {
         super(props);
         this.props.navigator.setOnNavigatorEvent(this.setOnNavigatorEvent);
@@ -31,8 +35,7 @@ class SharePlaceScreen extends Component {
     };
 
     placeAddedHandler = placeName => {
-        if (this.state.placeName.trim() !== '')
-            this.props.onPlaceAdded(this.state.placeName);
+        if (this.state.placeName.trim() !== '') this.props.onPlaceAdded(this.state.placeName);
     };
 
     render() {
@@ -44,15 +47,9 @@ class SharePlaceScreen extends Component {
                     </MainText>
                     <PickImage />
                     <PickLocation />
-                    <PlaceInput
-                        placeName={this.state.placeName}
-                        onChangeText={this.placeNameChangedGandler}
-                    />
+                    <PlaceInput placeName={this.state.placeName} onChangeText={this.placeNameChangedGandler} />
                     <View style={styles.button}>
-                        <Button
-                            onPress={this.placeAddedHandler}
-                            title="Share the Place"
-                        />
+                        <Button onPress={this.placeAddedHandler} title="Share the Place" />
                     </View>
                 </View>
             </ScrollView>

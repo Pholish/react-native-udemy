@@ -9,7 +9,7 @@ class PickImage extends Component {
                     <Text>Map</Text>
                 </View>
                 <View style={styles.button}>
-                    <Button title="Locate Me" />
+                    <Button title="Locate Me" onPress={() => alert('Hello')} />
                 </View>
             </View>
         );

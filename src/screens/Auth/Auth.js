@@ -12,27 +12,27 @@ class AuthScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            respStyles: {
-                pwContainerDirection: 'column',
-                pwContainerJustifyContent: 'flex-start',
-                pwWrapperWidth: '100%',
-            },
+            viewMode: Dimensions.get('window').height > 500 ? 'portrait' : 'landscape',
         };
-        Dimensions.addEventListener('change', dims => {
-            this.setState({
-                pwContainerDirection: Dimensions.get('window').height > 500 ? 'column' : 'row',
-                pwContainerJustifyContent: Dimensions.get('window').height > 500 ? 'flex-start' : 'space-between',
-                pwWrapperWidth: Dimensions.get('window').height > 500 ? '100%' : '45%',
-            });
-        });
+        Dimensions.addEventListener('change', this.updateStyles);
     }
+
+    componentWillUnmount = () => {
+        Dimensions.removeEventListener('change', this.updateStyles);
+    };
+
+    updateStyles = dims => {
+        this.setState({
+            viewMode: dims.window.height > 500 ? 'portrait' : 'landscape',
+        });
+    };
 
     loginHandler = () => {
         startMainTabs();
     };
     render() {
         let headingText = null;
-        if (Dimensions.get('window').height > 500) {
+        if (this.state.viewMode === 'portrait') {
             headingText = (
                 <MainText>
                     <HeadingText>Please Log In</HeadingText>
@@ -49,21 +49,26 @@ class AuthScreen extends Component {
                     <View style={styles.inputContainer}>
                         <DefaulInput placeholder="Your E-mail Address" style={[styles.input, { borderColor: 'red' }]} />
                         <View
-                            style={{
-                                flexDirection: this.state.respStyles.pwContainerDirection,
-                                justifyContent: this.state.respStyles.pwContainerJustifyContent,
-                            }}>
+                            style={
+                                this.state.viewMode === 'portrait'
+                                    ? styles.portraitPasswordContainer
+                                    : styles.landscapePasswordContainer
+                            }>
                             <View
-                                style={{
-                                    width: this.state.respStyles.pwWrapperWidth,
-                                }}>
+                                style={
+                                    this.state.viewMode === 'portrait'
+                                        ? styles.portraitPasswordWrapper
+                                        : styles.landscapePasswordWrapper
+                                }>
                                 <DefaulInput placeholder="Password" style={styles.input} />
                             </View>
                             <View
-                                style={{
-                                    width: this.state.respStyles.pwWrapperWidth,
-                                }}>
-                                ><DefaulInput placeholder="Confirm Password" style={styles.input} />
+                                style={
+                                    this.state.viewMode === 'portrait'
+                                        ? styles.portraitPasswordWrapper
+                                        : styles.landscapePasswordWrapper
+                                }>
+                                <DefaulInput placeholder="Confirm Password" style={styles.input} />
                             </View>
                         </View>
                     </View>
@@ -92,6 +97,20 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: '80%',
+    },
+    landscapePasswordContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    portraitPasswordContainer: {
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    },
+    landscapePasswordWrapper: {
+        width: '45%',
+    },
+    portraitPasswordWrapper: {
+        width: '100%',
     },
 });
 
