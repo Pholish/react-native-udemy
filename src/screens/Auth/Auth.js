@@ -149,7 +149,8 @@ class AuthScreen extends Component {
                         onChangeText={val => this.updateInputState('confirmPassword', val)}
                         valid={this.state.controls.confirmPassword.valid}
                         touched={this.state.controls.confirmPassword.touched}
-                        secureTextEnrty
+                        secureTextEntry
+                        autoCapitalize="none"
                     />
                 </View>
             );
@@ -196,6 +197,7 @@ class AuthScreen extends Component {
                                             valid={this.state.controls.password.valid}
                                             touched={this.state.controls.password.touched}
                                             secureTextEntry
+                                            autoCapitalize="none"
                                         />
                                     </View>
                                     {confirmPasswordControl}
