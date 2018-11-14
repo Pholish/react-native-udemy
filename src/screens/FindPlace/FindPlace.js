@@ -15,7 +15,7 @@ class FindPlaceScreen extends Component {
         super(props);
         this.props.navigator.setOnNavigatorEvent(this.setOnNavigatorEvent);
     }
-    placesSearchHandler = () => {
+    placesLoaded = () => {
         Animated.timing(this.state.placesAnim, {
             toValue: 1,
             duration: 500,
@@ -32,7 +32,7 @@ class FindPlaceScreen extends Component {
             this.setState({
                 placesLoaded: true,
             });
-            this.placesSearchHandler();
+            this.placesLoaded();
         });
     };
 
@@ -57,14 +57,14 @@ class FindPlaceScreen extends Component {
         });
     };
     render() {
-        const { placesLoaded, placesAnim } = this.state;
+        const { placesLoaded, placesAnim, removeAnim } = this.state;
         let content = (
             <Animated.View
                 style={{
-                    opacity: this.state.removeAnim,
+                    opacity: removeAnim,
                     transform: [
                         {
-                            scale: this.state.removeAnim.interpolate({
+                            scale: removeAnim.interpolate({
                                 inputRange: [0, 1],
                                 outputRange: [12, 1],
                             }),
@@ -82,7 +82,7 @@ class FindPlaceScreen extends Component {
             content = (
                 <Animated.View
                     style={{
-                        opacity: 0.5,
+                        opacity: placesAnim,
                     }}>
                     <View>
                         <ListItems places={this.props.places} onItemSelected={this.itemSelectedHandler} />
