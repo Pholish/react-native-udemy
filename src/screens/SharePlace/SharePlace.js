@@ -7,6 +7,7 @@ import MainText from '../../components/UI/MainText';
 import HeadingText from '../../components/UI/HeadingText';
 import PickImage from '../../components/PickImage/PickImage';
 import PickLocation from '../../components/PickLocation/PickLocation';
+import validate from '../../utility/validation';
 class SharePlaceScreen extends Component {
     static navigatorStyle = {
         navBarButtonColor: 'pink',
@@ -16,7 +17,16 @@ class SharePlaceScreen extends Component {
         super(props);
         this.props.navigator.setOnNavigatorEvent(this.setOnNavigatorEvent);
         this.state = {
-            placeName: '',
+            controls: {
+                placeName: {
+                    value: '',
+                    valid: false,
+                    touched: false,
+                    validationRules: {
+                        notEmpty: true,
+                    },
+                },
+            },
         };
     }
 
@@ -31,11 +41,24 @@ class SharePlaceScreen extends Component {
     };
 
     placeNameChangedGandler = val => {
-        this.setState({ placeName: val });
+        this.setState(prevState => {
+            return {
+                controls: {
+                    ...prevState.controls,
+                    placeName: {
+                        ...prevState.controls.placeName,
+                        value: val,
+                        valid: validate(val, prevState.controls.placeName.validationRules),
+                        touched: true,
+                    },
+                },
+            };
+        });
     };
 
-    placeAddedHandler = placeName => {
-        if (this.state.placeName.trim() !== '') this.props.onPlaceAdded(this.state.placeName);
+    placeAddedHandler = () => {
+        if (this.state.controls.placeName.value.trim() !== '')
+            this.props.onPlaceAdded(this.state.controls.placeName.value);
     };
 
     render() {
@@ -47,9 +70,13 @@ class SharePlaceScreen extends Component {
                     </MainText>
                     <PickImage />
                     <PickLocation />
-                    <PlaceInput placeName={this.state.placeName} onChangeText={this.placeNameChangedGandler} />
+                    <PlaceInput placeData={this.state.controls.placeName} onChangeText={this.placeNameChangedGandler} />
                     <View style={styles.button}>
-                        <Button onPress={this.placeAddedHandler} title="Share the Place" />
+                        <Button
+                            onPress={this.placeAddedHandler}
+                            disabled={!this.state.controls.placeName.valid}
+                            title="Share the Place"
+                        />
                     </View>
                 </View>
             </ScrollView>
