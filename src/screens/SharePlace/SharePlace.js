@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Button, ScrollView } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { connect } from 'react-redux';
+
 import { addPlace } from '../../store/actions/index';
 import PlaceInput from '../../components/PlaceInput/PlaceInput';
 import MainText from '../../components/UI/MainText';
@@ -63,7 +65,7 @@ class SharePlaceScreen extends Component {
 
     render() {
         return (
-            <ScrollView>
+            <KeyboardAwareScrollView extraHeight={150} enableOnAndroid={true} scrollEnabled={true}>
                 <View style={styles.container}>
                     <MainText>
                         <HeadingText>Share a Place with us!</HeadingText>
@@ -79,7 +81,7 @@ class SharePlaceScreen extends Component {
                         />
                     </View>
                 </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
         );
     }
 }
